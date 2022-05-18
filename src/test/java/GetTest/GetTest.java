@@ -1,5 +1,7 @@
 package GetTest;
 
+import RunTest.RunTest;
+import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -8,16 +10,24 @@ import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
 
-public class GetTest {
-    @Test
+public class GetTest extends idCharacter {
+    public static String lastEpisode;
+    public static String lastCharacter;
+    public static String ourName;
+    public static String ourRace;
+    public static String ourLocation;
+    public static String raceMorty;
+    public static String locMorty;
+    public static String nameOurC;
 
-    public void morty() {
+    @Step
+    public static void morty() {
         Response data1 = given()
                 .header("Content-type", "application/json")
                 .header("charset", "UTF-8")
                 .baseUri("https://rickandmortyapi.com/")
                 .when()
-                .get("api/character/2")
+                .get("api/character/" + id)
                 .then()
                 .extract()
                 .response();
@@ -25,15 +35,20 @@ public class GetTest {
         JSONObject infoMorty = new JSONObject(data1.getBody().asString());
         JSONArray episodeMorty = infoMorty.getJSONArray("episode");
         int countEpisodes = episodeMorty.length();
-        String lastEpisode = episodeMorty.getString(countEpisodes - 1);
-        String raceMorty = infoMorty.getString("species");
-        String locMorty = infoMorty.getJSONObject("location").getString("name");
+        lastEpisode = episodeMorty.getString(countEpisodes - 1);
+        String subStr = lastEpisode.substring(40);
+        nameOurC = infoMorty.getString("name");
+        raceMorty = infoMorty.getString("species");
+        locMorty = infoMorty.getJSONObject("location").getString("name");
 
-        System.out.println("Последний эпизод с Морти: " + lastEpisode + "\n" +
-                           "Номер последнего эпизода: " + countEpisodes + "\n" +
-                           "Раса Морти: " + raceMorty + "\n" +
-                           "Местоположение Морти: " + locMorty);
+        System.out.println("Последний эпизод с " + nameOurC + ": " + lastEpisode + "\n" +
+                "Номер последнего эпизода: " + subStr + "\n" +
+                "Раса " + nameOurC + ": " + raceMorty + "\n" +
+                "Местоположение " + nameOurC + ": " + locMorty);
+    }
 
+    @Step
+    public static void episode() {
         Response data2 = given()
                 .header("Content-type", "application/json")
                 .header("charset", "UTF-8")
@@ -47,8 +62,11 @@ public class GetTest {
         JSONObject lastEpisodeMorty = new JSONObject(data2.getBody().asString());
         JSONArray characterEpisode = lastEpisodeMorty.getJSONArray("characters");
         int countCharacter = characterEpisode.length();
-        String lastCharacter = characterEpisode.getString(countCharacter - 1);
+        lastCharacter = characterEpisode.getString(countCharacter - 1);
+    }
 
+    @Step
+    public static void character() {
         Response data3 = given()
                 .header("Content-type", "application/json")
                 .header("charset", "UTF-8")
@@ -60,10 +78,13 @@ public class GetTest {
                 .response();
 
         JSONObject ourCharacter = new JSONObject(data3.getBody().asString());
-        String ourName = ourCharacter.getString("name");
-        String ourRace = ourCharacter.getString("species");
-        String ourLocation = ourCharacter.getJSONObject("location").getString("name");
+        ourName = ourCharacter.getString("name");
+        ourRace = ourCharacter.getString("species");
+        ourLocation = ourCharacter.getJSONObject("location").getString("name");
+    }
 
+    @Step
+    public static void result(){
         System.out.println("\nПоследний персонаж в эпизоде: " + lastCharacter + "\n" +
                            "Его имя: " + ourName + "\n" +
                            "Его раса: " + ourRace + "\n" +
