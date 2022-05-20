@@ -1,14 +1,20 @@
 package GetTest;
 
-import RunTest.RunTest;
+import io.cucumber.java.ru.Когда;
+import io.cucumber.java.ru.Тогда;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import static io.restassured.RestAssured.enableLoggingOfRequestAndResponseIfValidationFails;
 import static io.restassured.RestAssured.given;
-import static org.junit.Assert.assertEquals;
 
 public class GetTest extends idCharacter {
     public static String lastEpisode;
@@ -20,6 +26,8 @@ public class GetTest extends idCharacter {
     public static String locMorty;
     public static String nameOurC;
 
+    @DisplayName("Первый тест по Рику и Морти")
+    @Когда("^получили информацию по первому персонажу$")
     @Step
     public static void morty() {
         Response data1 = given()
@@ -47,6 +55,7 @@ public class GetTest extends idCharacter {
                 "Местоположение " + nameOurC + ": " + locMorty);
     }
 
+    @Когда("^получили персонажа из последнего эпизода$")
     @Step
     public static void episode() {
         Response data2 = given()
@@ -65,6 +74,7 @@ public class GetTest extends idCharacter {
         lastCharacter = characterEpisode.getString(countCharacter - 1);
     }
 
+    @Когда("^получили информацию по персонажу из последнего эпизода$")
     @Step
     public static void character() {
         Response data3 = given()
@@ -83,6 +93,7 @@ public class GetTest extends idCharacter {
         ourLocation = ourCharacter.getJSONObject("location").getString("name");
     }
 
+    @Тогда("^сравнили первого и второго персонажа$")
     @Step
     public static void result(){
         System.out.println("\nПоследний персонаж в эпизоде: " + lastCharacter + "\n" +
@@ -95,5 +106,30 @@ public class GetTest extends idCharacter {
         System.out.println();
         if(locMorty.equals(ourLocation)){ System.out.println("Местоположение персонажей одинаково"); }
         else { System.out.println("Местоположение персонажей разное");}
+
+    }
+
+
+
+    @DisplayName("Второй тест по работе с сервером")
+    @Когда("^переименовали объект и получили данные с сервера$")
+    public void testPotato() throws IOException {
+
+        JSONObject body = new JSONObject(new String(Files.readAllBytes(Paths.get("src/test/resources/json/potato.json"))));
+        body.put("name", "Tomato");
+        body.put("job", "Eat maket");
+
+        String renamePotato = given()
+                .header("Content-type", "application/json")
+                .header("charset", "UTF-8")
+                .baseUri("https://reqres.in/")
+                .body(body.toString())
+                .post("/api/users")
+                .then()
+                .statusCode(201)
+                .extract().response()
+                .prettyPrint();
+
+
     }
 }
