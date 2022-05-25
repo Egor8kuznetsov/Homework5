@@ -1,5 +1,6 @@
 package GetTest;
 
+
 import io.cucumber.java.ru.Когда;
 import io.cucumber.java.ru.Тогда;
 import io.qameta.allure.Step;
@@ -8,12 +9,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
+
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static io.restassured.RestAssured.enableLoggingOfRequestAndResponseIfValidationFails;
+
 import static io.restassured.RestAssured.given;
 
 public class GetTest extends idCharacter {
@@ -26,9 +29,9 @@ public class GetTest extends idCharacter {
     public static String locMorty;
     public static String nameOurC;
 
+
     @DisplayName("Первый тест по Рику и Морти")
     @Когда("^получили информацию по первому персонажу$")
-    @Step
     public static void morty() {
         Response data1 = given()
                 .header("Content-type", "application/json")
@@ -56,7 +59,7 @@ public class GetTest extends idCharacter {
     }
 
     @Когда("^получили персонажа из последнего эпизода$")
-    @Step
+
     public static void episode() {
         Response data2 = given()
                 .header("Content-type", "application/json")
@@ -75,7 +78,7 @@ public class GetTest extends idCharacter {
     }
 
     @Когда("^получили информацию по персонажу из последнего эпизода$")
-    @Step
+
     public static void character() {
         Response data3 = given()
                 .header("Content-type", "application/json")
@@ -94,7 +97,7 @@ public class GetTest extends idCharacter {
     }
 
     @Тогда("^сравнили первого и второго персонажа$")
-    @Step
+
     public static void result(){
         System.out.println("\nПоследний персонаж в эпизоде: " + lastCharacter + "\n" +
                            "Его имя: " + ourName + "\n" +
